@@ -119,6 +119,12 @@ func (s MoneyService) FundsTransfer(w http.ResponseWriter, r *http.Request, ps h
 		return
 	}
 
+	if tr.FromUUID == tr.ToUUID {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "users uuid must be different, in request: %v\n", tr.FromUUID)
+		return
+	}
+
 	if tr.Amount <= 0 {
 		w.WriteHeader(http.StatusBadRequest)
 		fmt.Fprintf(w, "amount must be greater than zero, in request: %v\n", tr.Amount)

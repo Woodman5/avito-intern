@@ -8,75 +8,19 @@ services:
     container_name: rest-server
     hostname: rest-server
     depends_on:
-      - server
+      - postgres
+    restart: on-failure
     ports:
       - "8080:8080"
     networks:
       - mynet
     environment:
-      HOST: localhost
       PORT: 8080
-      GRPC_HOST: petserver
-      GRPC_PORT: 8081
-
-  grafhql:
-    build:
-      context: ..
-      dockerfile: ./build/package/Graphql.Dockerfile
-    container_name: graph-server
-    hostname: graph-server
-    depends_on:
-      - server
-    ports:
-      - "8082:8082"
-    networks:
-      - mynet
-    environment:
-      PORT: 8082
-      GRPC_HOST: petserver
-      GRPC_PORT: 8081
-
-  server:
-    build:
-      context: ..
-      dockerfile: ./build/package/Petserver.Dockerfile
-    container_name: pet-server
-    hostname: petserver
-    depends_on:
-      - postgres
-    restart: on-failure
-    #    ports:
-    #      - '8081:8081'
-    networks:
-      - mynet
-    environment:
-      #      HOST: petserver
-      PORT: 8081
       DATABASE_HOST: postgres
       DATABASE_USER: postgres
       DATABASE_PASSWORD: secret
       DATABASE_PORT: 5432
       DATABASE_NAME: postgres
-
-  prometheus:
-    build:
-      context: ..
-      dockerfile: ./build/package/prometheus.Dockerfile
-    container_name: prometheus
-    hostname: prm
-    networks:
-      - mynet
-  #    ports:
-  #      - '9090:9090'
-
-  grafana:
-    image: grafana/grafana
-    container_name: grafana
-    hostname: grafana
-    networks:
-      - mynet
-    ports:
-      - "3000:3000"
 
   postgres:
     image: postgres:latest
@@ -85,8 +29,6 @@ services:
     restart: always
     networks:
       - mynet
-    #    ports:
-    #      - '5432:5432'
     volumes:
       - postgres-data:/var/lib/postgresql/data
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
