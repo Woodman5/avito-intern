@@ -5,18 +5,18 @@ CREATE TABLE IF NOT EXISTS public.user_moneys
 );
 
 create unique index user_moneys_uuid_uindex
-    on public.usermoney (uuid);
+    on public.user_moneys (uuid);
 
-alter table public.usermoney
+alter table public.user_moneys
     add constraint user_moneys_pk
         primary key (uuid);
 
 create table public.transactions
 (
     uuid uuid not null,
-    createdat timestamp not null,
-    useruuid uuid not null,
-    transactiontype smallint not null,
+    created_at bigint not null,
+    user_uuid uuid not null,
+    transaction_type smallint not null,
     amount bigint default 0 not null,
     balance bigint default 0 not null,
     source character varying(100) not null,
@@ -36,7 +36,7 @@ INSERT INTO public.user_moneys (uuid, amount) VALUES
     ('58bb92ab-4051-4baa-bc0a-52bad53458d6', 857400),
     ('56a36a84-fb53-4bfa-a2dd-4307c4b3c981', 203700);
 
-INSERT INTO public.transactions (uuid, createdat, useruuid, transactiontype, amount, balance, source,reason) VALUES
+INSERT INTO public.transactions (uuid, created_at, user_uuid, transaction_type, amount, balance, source, reason)VALUES
     ('40f27f19-b0f5-49db-a2d1-76a787ac69f6', '2021-09-01 04:11:58.000000', 'e6030c5a-219b-451c-bef2-344c128ef08f', 1, 23000, 7410000, 'Vasya', 'Coffee'),
     ('e900108b-6761-47f3-81ed-afbf874f98f7', '2021-09-05 02:10:54.000000', '56a36a84-fb53-4bfa-a2dd-4307c4b3c981', 1, 200000, 203700, 'Tolyan', 'Car repair'),
     ('ac592f97-6045-45ef-a7af-ecd5699aaffe', '2021-09-09 12:31:23.000000', 'e6030c5a-219b-451c-bef2-344c128ef08f', 0, 10000, 7400000, 'Boss', 'Fee'),

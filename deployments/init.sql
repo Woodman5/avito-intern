@@ -14,9 +14,9 @@ alter table public.user_moneys
 create table public.transactions
 (
     uuid uuid not null,
-    createdat timestamp not null,
-    useruuid uuid not null,
-    transactiontype smallint not null,
+    created_at bigint not null,
+    user_uuid uuid not null,
+    transaction_type smallint not null,
     amount bigint default 0 not null,
     balance bigint default 0 not null,
     source character varying(100) not null,

@@ -1,11 +1,12 @@
 package controllers
 
 import (
-	// "avito-intern/internal/models"
+	"avito-intern/internal/models"
 	"avito-intern/internal/service"
 	"avito-intern/internal/utils"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 
 	// "github.com/google/uuid"
 	"github.com/julienschmidt/httprouter"
@@ -48,104 +49,106 @@ func (s MoneyService) GetUserMoneyAmount(w http.ResponseWriter, r *http.Request,
 	w.Write(result)
 }
 
-// func (s *UserPetService) CreateUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-// 	var user models.User
+func (s *MoneyService) CreateTransaction(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var tr models.TransactionRequest
 
-// 	body, err := ioutil.ReadAll(r.Body)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "create user error: %s\n", err)
-// 		return
-// 	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "create transaction error: %s\n", err)
+		return
+	}
 
-// 	err = json.Unmarshal(body, &user)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		fmt.Fprintf(w, "create user json decoding error: %s\n", err)
-// 		return
-// 	}
+	err = json.Unmarshal(body, &tr)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "create transaction json decoding error: %s\n", err)
+		return
+	}
 
-// 	userUUID, err := uuid.NewUUID()
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "create user UUID generation error: %s\n", err)
-// 		return
-// 	}
+	if tr.Amount <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "amount must be greater than zero, in request: %v\n", tr.Amount)
+		return
+	}
 
-// 	user.UUID = userUUID.String()
+	if tr.Amount > 92233720368547758 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "wrong amount: %s\n", utils.NumberIsTooBig)
+		return
+	}
 
-// 	createdUser, err := s.UserService.CreateUser(&user)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "create user error: %s\n", err)
-// 		return
-// 	}
+	tr.UserUUID = ps.ByName("userId")
 
-// 	result, err := json.Marshal(createdUser)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "create user json encoding error: %s\n", err)
-// 		return
-// 	}
+	createdTransaction, err := s.MoneyService.CreateTransaction(&tr)
+	if err != nil && (err == utils.NumberIsTooBig || err == utils.NotEnoughFunds) {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "create transaction error: %s\n", err)
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "create transaction error: %s\n", err)
+		return
+	}
 
-// 	w.WriteHeader(http.StatusOK)
-// 	w.Write(result)
-// }
+	result, err := json.Marshal(createdTransaction)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "answer for create transaction json encoding error: %s\n", err)
+		return
+	}
 
-// func (s *UserPetService) UpdateUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-// 	var user models.User
+	w.WriteHeader(http.StatusOK)
+	w.Write(result)
+}
 
-// 	body, err := ioutil.ReadAll(r.Body)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "update user error: %s\n", err)
-// 		return
-// 	}
+func (s MoneyService) FundsTransfer(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
+	var tr models.TransferRequest
 
-// 	err = json.Unmarshal(body, &user)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		fmt.Fprintf(w, "update user json decoding error: %s\n", err)
-// 		return
-// 	}
+	body, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "transfer error: %s\n", err)
+		return
+	}
 
-// 	updatedUser, err := s.UserService.UpdateUser(&user)
-// 	if err != nil && err == utils.UserNotFound {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		fmt.Fprintf(w, "update user error: %s\n", err)
-// 		return
-// 	} else if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "update user error: %s\n", err)
-// 		return
-// 	}
+	err = json.Unmarshal(body, &tr)
+	if err != nil {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "transfer json decoding error: %s\n", err)
+		return
+	}
 
-// 	result, err := json.Marshal(updatedUser)
-// 	if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "update user json encoding error: %s\n", err)
-// 		return
-// 	}
+	if tr.Amount <= 0 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "amount must be greater than zero, in request: %v\n", tr.Amount)
+		return
+	}
 
-// 	w.WriteHeader(http.StatusOK)
-// 	w.Write(result)
-// }
+	if tr.Amount > 92233720368547758 {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "wrong amount: %s\n", utils.NumberIsTooBig)
+		return
+	}
 
-// func (s *UserPetService) DeleteUser(w http.ResponseWriter, r *http.Request, ps httprouter.Params) {
-// 	userUUID := ps.ByName("userId")
-// 	_, err := s.UserService.DeleteUser(userUUID)
+	createdTransfer, err := s.MoneyService.FundsTransfer(&tr)
+	if err != nil && (err == utils.NumberIsTooBig || err == utils.NotEnoughFunds) {
+		w.WriteHeader(http.StatusBadRequest)
+		fmt.Fprintf(w, "transfer error: %s\n", err)
+		return
+	} else if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "transfer error: %s\n", err)
+		return
+	}
 
-// 	if err != nil && err == utils.UserNotFound {
-// 		w.WriteHeader(http.StatusBadRequest)
-// 		fmt.Fprintf(w, "delete user error: %s\n", err)
-// 		return
-// 	} else if err != nil {
-// 		w.WriteHeader(http.StatusInternalServerError)
-// 		fmt.Fprintf(w, "delete user error: %s\n", err)
-// 		return
-// 	}
+	result, err := json.Marshal(createdTransfer)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		fmt.Fprintf(w, "answer for funds transfer json encoding error: %s\n", err)
+		return
+	}
 
-// 	w.WriteHeader(http.StatusOK)
-// 	fmt.Fprintf(w, `{"deleted_uuid":"%s"}`, userUUID)
-
-// }
+	w.WriteHeader(http.StatusOK)
+	w.Write(result)
+}

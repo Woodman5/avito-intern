@@ -4,12 +4,12 @@ import (
 	"avito-intern/internal/config"
 	"avito-intern/internal/middleware"
 	"avito-intern/internal/routes"
+	"fmt"
 	"github.com/sirupsen/logrus"
+	"github.com/spf13/viper"
 	"log"
 	"net/http"
 )
-
-const Port = ":8080"
 
 func main() {
 	err := config.Init()
@@ -18,10 +18,12 @@ func main() {
 	}
 	middleware.InitLogger()
 
+	port := fmt.Sprintf(":%v", viper.Get("port"))
+
 	logrus.SetFormatter(&logrus.TextFormatter{DisableColors: true})
 	logrus.WithFields(logrus.Fields{
 		"host": "localhost",
-		"port": Port,
+		"port": port,
 	}).Info("Starting server")
 
 	router := routes.Routes()
@@ -29,5 +31,5 @@ func main() {
 	siteHandler := middleware.AccessLogMiddleware(router)
 	siteHandler = middleware.PanicMiddleware(siteHandler)
 
-	log.Fatal(http.ListenAndServe(Port, siteHandler))
+	log.Fatal(http.ListenAndServe(port, siteHandler))
 }
