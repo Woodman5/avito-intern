@@ -1,14 +1,14 @@
-CREATE TABLE IF NOT EXISTS public.usermoney
+CREATE TABLE IF NOT EXISTS public.user_moneys
 (
     uuid uuid not null,
     amount bigint default 0 not null
 );
 
-create unique index usermoney_uuid_uindex
-    on public.usermoney (uuid);
+create unique index user_moneys_uuid_uindex
+    on public.user_moneys (uuid);
 
-alter table public.usermoney
-    add constraint usermoney_pk
+alter table public.user_moneys
+    add constraint user_moneys_pk
         primary key (uuid);
 
 create table public.transactions

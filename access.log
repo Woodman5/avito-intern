@@ -1,0 +1,8 @@
+{"level":"info","method":"GET","msg":"/","remote_addr":"127.0.0.1:50456","time":"2021-09-10T11:12:58+03:00","work_time":0}
+{"level":"info","method":"GET","msg":"/favicon.ico","remote_addr":"127.0.0.1:50456","time":"2021-09-10T11:12:59+03:00","work_time":0}
+{"level":"info","method":"GET","msg":"/amount/","remote_addr":"127.0.0.1:50456","time":"2021-09-10T11:13:16+03:00","work_time":1000000}
+{"level":"info","method":"GET","msg":"/amount/werfergfew","remote_addr":"127.0.0.1:50456","time":"2021-09-10T11:13:22+03:00","work_time":13000000}
+{"level":"info","method":"GET","msg":"/amount/58bb92ab-4051-4baa-bc0a-52bad53458d6","remote_addr":"127.0.0.1:50456","time":"2021-09-10T11:13:51+03:00","work_time":6000000}
+{"level":"info","method":"GET","msg":"/amount/58bb92ab-4051-4baa-bc0a-52bad53458d6","remote_addr":"127.0.0.1:52738","time":"2021-09-10T11:20:19+03:00","work_time":1000000}
+{"level":"info","method":"GET","msg":"/amount/58bb92ab-4051-4baa-bc0a-52bad53458d9","remote_addr":"127.0.0.1:52738","time":"2021-09-10T11:21:14+03:00","work_time":1000000}
+{"level":"info","method":"GET","msg":"/amount/58bb92ab-4051-4baa-bc0a-52bad53458d6","remote_addr":"127.0.0.1:52738","time":"2021-09-10T11:21:23+03:00","work_time":1000000}

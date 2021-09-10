@@ -21,7 +21,7 @@ func Init() error {
 
 	viper.SetDefault("db.host", "postgres")
 	viper.SetDefault("db.user", "postgres")
-	viper.SetDefault("db.password", "verySecretWord")
+	viper.SetDefault("db.password", "postgres")
 	viper.SetDefault("db.name", "postgres")
 	viper.SetDefault("db.port", 5432)
 

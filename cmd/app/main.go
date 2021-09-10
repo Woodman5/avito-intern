@@ -1,6 +1,7 @@
 package main
 
 import (
+	"avito-intern/internal/config"
 	"avito-intern/internal/middleware"
 	"avito-intern/internal/routes"
 	"github.com/sirupsen/logrus"
@@ -11,6 +12,10 @@ import (
 const Port = ":8080"
 
 func main() {
+	err := config.Init()
+	if err != nil {
+		log.Fatalf("%s", err.Error())
+	}
 	middleware.InitLogger()
 
 	logrus.SetFormatter(&logrus.TextFormatter{DisableColors: true})

@@ -1,14 +1,14 @@
-CREATE TABLE IF NOT EXISTS public.usermoney
+CREATE TABLE IF NOT EXISTS public.user_moneys
 (
     uuid uuid not null,
     amount bigint default 0 not null
 );
 
-create unique index usermoney_uuid_uindex
+create unique index user_moneys_uuid_uindex
     on public.usermoney (uuid);
 
 alter table public.usermoney
-    add constraint usermoney_pk
+    add constraint user_moneys_pk
         primary key (uuid);
 
 create table public.transactions
@@ -30,7 +30,7 @@ alter table transactions
     add constraint transactions_pk
         primary key (uuid);
 
-INSERT INTO public.usermoney (uuid, amount) VALUES
+INSERT INTO public.user_moneys (uuid, amount) VALUES
     ('e6030c5a-219b-451c-bef2-344c128ef08f', 7400000),
     ('d791ed34-b8db-4e4f-a9a7-228f56c8ac48', 45000),
     ('58bb92ab-4051-4baa-bc0a-52bad53458d6', 857400),
